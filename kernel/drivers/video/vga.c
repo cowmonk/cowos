@@ -37,7 +37,7 @@ term_putentryat(char c, uint8_t color, size_t x, size_t y)
 void
 term_putchar(char c)
 {
-        term_putentryat(c, term_color, term_row);
+        term_putentryat(c, term_color, term_col, term_row);
         if (++term_col == VGA_WIDTH) {
                 term_col = 0;
                 if (++term_row == VGA_HEIGHT) {
@@ -49,7 +49,7 @@ term_putchar(char c)
 void
 term_writestr(const char* data)
 {
-        for (size_t i = 0; i < strlen(data); i++) {
+        for (size_t i = 0; data[i] != '\0'; i++) {
                 term_putchar(data[i]);
         }
 }

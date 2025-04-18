@@ -41,10 +41,10 @@ vga_entry(unsigned char uc, uint8_t color)
 #define VGA_HEIGHT 25
 #define VGA_MEMORY 0xB8000 /* VGA memory location */
 
-void term init(void);
+void term_init(void);
 void term_setcolor(uint8_t color);
 void term_putentryat(char c, uint8_t color, size_t x, size_t y);
 void term_putchar(char c);
 void term_writestr(const char* data);
 
-#endif #VGA_H
+#endif // VGA_H
