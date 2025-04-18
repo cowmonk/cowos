@@ -1,4 +1,4 @@
-#include "../include/drivers/video/vga.h"
+#include <drivers/video/vga.h>
 #include <string.h>
 
 void

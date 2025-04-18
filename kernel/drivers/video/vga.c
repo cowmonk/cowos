@@ -1,4 +1,4 @@
-#include "../../include/video/vga.h"
+#include <drivers/video/vga.h>
 #include <string.h>
 
 size_t term_row;
@@ -50,7 +50,7 @@ void
 term_write(const char* data, size_t size)
 {
         for (size_t i = 0; i < size; i++) {
-                term_putchar(data[i];
+                term_putchar(data[i]);
         }
 }
 
