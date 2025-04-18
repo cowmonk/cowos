@@ -45,7 +45,6 @@ void term init(void);
 void term_setcolor(uint8_t color);
 void term_putentryat(char c, uint8_t color, size_t x, size_t y);
 void term_putchar(char c);
-void term_write(const char* data, size_t size);
 void term_writestr(const char* data);
 
 #endif #VGA_H

@@ -47,15 +47,9 @@ term_putchar(char c)
 }
 
 void
-term_write(const char* data, size_t size)
-{
-        for (size_t i = 0; i < size; i++) {
-                term_putchar(data[i]);
-        }
-}
-
-void
 term_writestr(const char* data)
 {
-        term_write(data, strlen(data));
+        for (size_t i = 0; i < strlen(data); i++) {
+                term_putchar(data[i]);
+        }
 }
