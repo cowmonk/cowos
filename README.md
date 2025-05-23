@@ -1,6 +1,8 @@
 # cowos
 Custom OS from scratch in C
 
+Migrated from Rekketstone/cowos
+
 # Notes
 This only supports 32bit for now, please DO NOT compile with 64bit or it'll fail to boot
 
