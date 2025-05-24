@@ -1,5 +1,11 @@
 #include <drivers/video/vga.h>
+/* #include <bootloader.h> */
 #include <string.h>
+
+/* for frame buffer
+static volatile struct limine_framebuffer_request limineFBreq = {
+    .id = LIMINE_FRAMEBUFFER_REQUEST, .revision = 0};
+*/
 
 size_t term_row;
 size_t term_col;

@@ -1,0 +1,8 @@
+cowos.iso
+kernel/bin/
+limine/
+isodir/boot/limine/limine-bios.sys
+isodir/boot/limine/limine-bios-cd.bin
+isodir/boot/limine/limine-uefi-cd.bin
+isodir/EFI/BOOT/BOOTX64.EFI
+isodir/EFI/BOOT/BOOTIA32.EFI
