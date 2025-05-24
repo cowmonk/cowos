@@ -1,6 +1,7 @@
 cowos.iso
 kernel/bin/
-limine/
+/limine/
+isodir/boot/cowos
 isodir/boot/limine/limine-bios.sys
 isodir/boot/limine/limine-bios-cd.bin
 isodir/boot/limine/limine-uefi-cd.bin
