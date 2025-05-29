@@ -14,7 +14,7 @@ iso: kernel limine
 kernel:
 	make -C ./kernel/ all
 
-limine:
+limine: kernel
 	git clone https://github.com/limine-bootloader/limine.git --branch=v9.x-binary --depth=1
 	make -C limine
 	
@@ -26,3 +26,4 @@ limine:
 	
 clean:
 	rm cowos.iso
+	make -C ./kernel/ clean

@@ -23,5 +23,4 @@ make
 ```
 
 # Credits
-- [nolibc](https://github.com/wtarreau/nolibc): libc-less wrapper to make tiny static executables for simple programs.
 - [Limine](https://github.com/limine-bootloader/limine): modern, advanced, portable, multiprotocol bootloader and boot manager. 
