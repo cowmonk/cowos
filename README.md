@@ -26,4 +26,4 @@ make
 - [Limine](https://github.com/limine-bootloader/limine): modern, advanced, portable, multiprotocol bootloader and boot manager. 
 
 ## People
-- micl: random guy on the interweb in the LHL discord server gave me a free vga driver to use lol
+- [micl](https://micl.dev): random guy on the interweb in the LHL discord server gave me a free vga driver to use lol
