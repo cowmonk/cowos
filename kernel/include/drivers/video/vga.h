@@ -2,49 +2,30 @@
 #define VGA_H
 
 #include <stdint.h>
-#include <stddef.h>
 
-/* hardware text mode const */
-enum vga_color {
-        VGA_COLOR_BLACK = 0,
-        VGA_COLOR_BLUE = 1,
-        VGA_COLOR_GREEN = 2,
-        VGA_COLOR_CYAN = 3,
-        VGA_COLOR_RED = 4,
-        VGA_COLOR_MAGENTA = 5,
-        VGA_COLOR_BROWN = 6,
-        VGA_COLOR_LIGHT_GREY = 7,
-        VGA_COLOR_DARK_GREY = 8,
-        VGA_COLOR_LIGHT_BLUE = 9,
-        VGA_COLOR_LIGHT_GREEN = 10,
-        VGA_COLOR_LIGHT_CYAN = 11,
-        VGA_COLOR_LIGHT_RED = 12,
-        VGA_COLOR_LIGHT_MAGENTA = 13,
-        VGA_COLOR_LIGHT_BROWN = 14,
-        VGA_COLOR_WHITE = 15,
-};
+// VGA mem addr
+#define VGA_TEXT_BUFFER 0xB8000      // Text mode video memory
+#define VGA_GRAPHICS_BUFFER 0xA0000  // Graphics mode video memory
 
-static inline uint8_t
-vga_entry_color(enum vga_color fg, enum vga_color bg)
-{
-        return fg | bg << 4;
-}
+// VGA mode 13h dimensions
+#define VGA_WIDTH 320
+#define VGA_HEIGHT 200
 
-static inline uint16_t
-vga_entry(unsigned char uc, uint8_t color)
-{
-        return (uint16_t) uc | (uint16_t) color << 8;
-}
+// VGA register IO ports 
+#define VGA_AC_INDEX 0x3C0        // attribute controller index
+#define VGA_AC_WRITE 0x3C0        // attribute controller write
+#define VGA_AC_READ 0x3C1         // attribute controller read
+#define VGA_MISC_WRITE 0x3C2      // miscellaneous output register
+#define VGA_SEQ_INDEX 0x3C4       // sequencer index
+#define VGA_SEQ_DATA 0x3C5        // sequencer data
+#define VGA_GC_INDEX 0x3CE        // graphics controller index
+#define VGA_GC_DATA 0x3CF         // graphics controller data
+#define VGA_CRTC_INDEX 0x3D4      // CRT controller index
+#define VGA_CRTC_DATA 0x3D5       // CRT controller data
+#define VGA_INSTAT_READ 0x3DA     // input status read
 
-/* using mode 3 of VGA 80x25 */
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-#define VGA_MEMORY 0xA0000 /* VGA memory location */
+void vga_set_mode_13h(void);
+void vga_put_pixel(uint16_t x, uint16_t y, uint8_t color);
+void vga_clear_screen(uint8_t color);
 
-void term_init(void);
-void term_setcolor(uint8_t color);
-void term_putentryat(char c, uint8_t color, size_t x, size_t y);
-void term_putchar(char c);
-void term_writestr(const char* data);
-
-#endif // VGA_H
+#endif
