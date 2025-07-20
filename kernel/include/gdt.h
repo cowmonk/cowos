@@ -4,12 +4,12 @@
 #define GDT_H
 
 typedef struct GDTEntry {
-	uint16_t limit;
+	uint16_t limit_low;
 	uint16_t base_low;
-	uint16_t base_mid;
-	uint8_t base_high;
+	uint8_t base_mid;
 	uint8_t access;
-	uint8_t granularity;
+	uint8_t limit_high_and_flags;
+	uint8_t base_high;
 } __attribute__((packed)) GDTEntry;
 
 typedef struct GDTPtr {
@@ -17,7 +17,7 @@ typedef struct GDTPtr {
 	uint64_t base;
 } __attribute__((packed)) GDTPtr;
 
-#define GDT_NUM_ENTRIES 5 /* including null descriptor */
+#define GDT_NUM_ENTRIES 5 // Incl. null descriptor 
 #define GDT_KERNEL_CODE 0x08
 #define GDT_KERNEL_DATA 0x10
 #define GDT_USER_CODE   0x18
