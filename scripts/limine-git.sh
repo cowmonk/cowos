@@ -11,4 +11,8 @@ if [ ! -d ./limine/ ]; then
 
 	cp -v limine/BOOTX64.EFI isodir/EFI/BOOT/
 	cp -v limine/BOOTIA32.EFI isodir/EFI/BOOT/
+else
+	echo "Limine is already setup! Skipping..."
 fi
+
+

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "Starting QEMU with GDB server (localhost:1234)..."
+qemu-system-x86_64 -cdrom cowos.iso -m 512M -serial stdio -s -S &
+QEMU_PID=$!
+
+sleep 1 # just in case so we let it cook
+
+if ! ps -p $QEMU_PID > /dev/null; then
+    echo "Error: QEMU failed to start."
+    exit 1
+fi
+
+echo "Launching GDB in TUI mode..."
+gdb --tui \
+    -ex "file ./kernel/bin/cowos" \
+    -ex "target remote localhost:1234" \
+
+# kill QEMU when GDB exits
+echo "GDB exited. Terminating QEMU..."
+kill $QEMU_PID 2>/dev/null
