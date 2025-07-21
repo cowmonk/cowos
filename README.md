@@ -28,7 +28,8 @@ make
 By default the kernel is compiled with debug symbols, if you would like to avoid this, you can simply override the CFLAGS:
 ```bash
 cd kernel/ # it is recommended to go to the actual directory yourself
-make CFLAGS="-s -O3 -pipe"
+make CFLAGS="-O3 -pipe"
+llvm-strip --strip-all ./kernel/bin/cowos # strip everything
 cd .. # return to root
 make
 ```
