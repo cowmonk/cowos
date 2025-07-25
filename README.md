@@ -6,7 +6,7 @@ Custom OS from scratch in C
 # Notes
 **Heavily UNDER DEVELOPMENT**
 
-Currently just boots and well, does nothing lol.
+I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu).
 
 ## BUILDING
 You'll need a few things:
