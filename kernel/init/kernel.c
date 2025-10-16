@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <bootloader.h>
 #include <drivers/video/framebuffer.h>
+#include <mm/paging.h>
 
 static void
 hcf(void)
@@ -20,6 +21,7 @@ kernel_main(void)
 	
         /* Initialize framebuffer console */
         fb_init();
+        map_vga_memory();
         
         /* Test print */
         fb_puts("Hello World\n");

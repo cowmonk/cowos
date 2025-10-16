@@ -1,0 +1,125 @@
+#include <stdint.h>
+#include <stddef.h>
+#include <limine.h>
+#include <mm/paging.h>
+
+#define PAGE_PRESENT (1ULL << 0)
+#define PAGE_WRITABLE (1ULL << 1)
+#define PAGE_USER (1ULL << 2)
+#define PAGE_SIZE_2MB (1ULL << 7)
+#define PAGE_SIZE 4096
+
+// Get hhdm offset 
+extern volatile struct limine_hhdm_request hhdm_request;
+extern volatile struct limine_kernel_address_request kernel_address_request;
+
+// Static storage for page tables 
+static uint64_t pdpt[512] __attribute__((aligned(4096)));
+static uint64_t pd[512] __attribute__((aligned(4096)));
+
+// Get current cr3 value (PML address)
+static uint64_t
+get_cr3(void)
+{
+        uint64_t cr3;
+        __asm__ volatile("mov %%cr3, %0" : "=r"(cr3));
+        return cr3;
+}
+
+// Set cr3 to flush TLB
+static void
+set_cr3(uint64_t cr3)
+{
+        __asm__ volatile("mov %0, %%cr3" : : "r"(cr3) : "memory");
+}
+
+// Convert physical address to virt address using hhdm 
+static void*
+phys_to_virt(uint64_t phys)
+{
+        if (hhdm_request.response == NULL) {
+                // Fallback if hhdm is not available 
+                return (void *)(phys + 0xffff800000000000ULL);
+        }
+        return (void *)(phys + hhdm_request.response->offset);
+}
+
+// Convert virt address to physical address 
+static uint64_t
+virt_to_phys(void *virt)
+{
+        uint64_t addr = (uint64_t)virt;
+        
+        // Check if this is a kernel address 
+        if (kernel_address_request.response != NULL) {
+                uint64_t kernel_virt_base = kernel_address_request.response->virtual_base;
+                uint64_t kernel_phys_base = kernel_address_request.response->physical_base;
+                
+                // If address is in kernel space, convert using kernel base
+                if (addr >= kernel_virt_base && addr < kernel_virt_base + 0x200000) {
+                        return kernel_phys_base + (addr - kernel_virt_base);
+                }
+        }
+        
+        // Otherwise, in hhdm range 
+        if (hhdm_request.response == NULL) {
+                // Fallback to default if hhdm not avail 
+                return (addr - 0xffff800000000000ULL);
+        }
+        return (addr - hhdm_request.response->offset);
+}
+
+void
+map_vga_memory(void)
+{
+        // Get current PML4 from cr3
+        uint64_t cr3 = get_cr3();
+        uint64_t *pml4 = (uint64_t *)phys_to_virt(cr3 & ~0xFFF);
+        
+        // VGA memory starts at 0xA0000 (640KB) 
+        // Map entire lower 1MB region for simplcity 
+        
+        /* For address 0xA0000:
+         * PML4 index = 0 (bits 47-39)
+         * PDPT index = 0 (bits 38-30) 
+         * PD index = 0 (bits 29-21)
+         * PT index = 160 (0xA0) (bits 20-12)
+         */
+        
+        // Check if PML4[0] is present
+        if (!(pml4[0] & PAGE_PRESENT)) {
+                // Clear PDPT
+                for (int i = 0; i < 512; i++) {
+                        pdpt[i] = 0;
+                }
+                // Install PDPT (use physical address) 
+                pml4[0] = virt_to_phys(pdpt) | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER;
+        }
+        
+        // Get PDPT (convert physical address from entry to virt for access) 
+        uint64_t *pdpt_ptr = (uint64_t *)phys_to_virt(pml4[0] & ~0xFFF);
+        
+        // Check if PDPT[0] is present 
+        if (!(pdpt_ptr[0] & PAGE_PRESENT)) {
+                // Clear pd
+                for (int i = 0; i < 512; i++) {
+                        pd[i] = 0;
+                }
+                // Install pd (use physical address) 
+                pdpt_ptr[0] = virt_to_phys(pd) | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER;
+        }
+        
+        // Get pd (convert physical address from entry to virt for access) 
+        uint64_t *pd_ptr = (uint64_t *)phys_to_virt(pdpt_ptr[0] & ~0xFFF);
+        
+        // Check if we can use 2MB pages 
+        if (!(pd_ptr[0] & PAGE_PRESENT)) {
+                // Map the first 2MB as a large page (0x0 - 0x200000)
+                // This include VGA memory at 0xA0000-0xBFFFF
+                pd_ptr[0] = 0x0 | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER | PAGE_SIZE_2MB;
+        }
+        
+        // Flush TLB 
+        set_cr3(cr3);
+    
+}
